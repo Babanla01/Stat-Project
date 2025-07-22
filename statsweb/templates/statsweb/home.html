@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stats Table</title>
+    <style>
+        body{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        div.container {
+            width: min(800px, 100%);
+            padding: 20px;
+            border: 2px solid #ccc;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .label {
+            font-weight: bold;
+            margin: unset;
+            text-align: center;
+            display: block;
+            color: #333;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            border: 2px solid gray;
+        }
+        tr {
+            border: 1px solid gray;
+        }
+        th, td {
+            padding: 8px;
+            text-align: center;
+            border: 1px solid gray;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .result-section {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        form p {
+            margin: 10px 0;
+        }
+        form button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        form button:hover {
+            background-color: #45a049;
+        }
+        input[type="text"] {
+            width: 500px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        input[type="text"]:focus {
+            border-color: #4CAF50;
+            outline: none;
+        }
+        span {
+            color: red;
+        }
+        .error {
+            color: red;
+            font-weight: bold;
+        }
+        .success {
+            color: green;
+            font-weight: bold;
+        }
+        .clear{
+            padding: .5rem 1rem;
+            background-color: #09eb10;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .clear-container{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
+</head>
+    <body>
+        <div class="container">
+            <h1>📊 Class Interval & Statistics Calculator</h1>
+            <form method="post">
+                {% csrf_token %}
+                <!-- {{ form.as_p }} -->
+                <p>
+                    <span class="label">{{ form.numbers.label_tag }}</span><br>
+                    {{ form.numbers }}
+                    {% if form.numbers.errors %}
+                      <br><span style="color:red">{{ form.numbers.errors }}</span>
+                    {% endif %}
+                  </p>
+            
+                <button type="submit">Calculate</button>
+            </form>
+            {% if error %}
+                <p style="color:red">{{ error }}</p>
+            {% endif %}
+            {% if intervals %}
+                <div class="result-section">
+                    <h3>Results:</h3>
+                    <table>
+                        <tr>
+                            <th>Interval</th>
+                            <th>Tally</th>
+                            <th>f</th>
+                            <th>cf</th>
+                            <th>x</th>
+                            <th>fx</th>
+                            <th>x - x̄</th>
+                            <th>(x - x̄)²</th>
+                            <th>f(x - x̄)²</th>
+                        </tr>
+                        {% for row in intervals %}
+                        <tr>
+                            {% for item in row %}
+                                <td>{{ item }}</td>
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                        <tr>
+                            <th>Total</th>
+                            <td><!-- no tally total --></td>
+                            <td>{{ total_f }}</td>
+                            <td><!-- no cf total --></td>
+                            <td><!-- no x (midpoint) total --></td>
+                            <td>{{ total_fx }}</td>
+                            <td>{{ total_x_minus_xbar }}</td>
+                            <td>{{ total_x_minus_xbar_sq }}</td>
+                            <td>{{ total_fx_minus_xbar_sq }}</td>
+                          </tr>
+                    </table>
+                    <p><strong>Mean:</strong> {{ mean }}</p>
+                    <p><strong>Median:</strong> {{ median }}</p>
+                    <p><strong>Mode:</strong> {{ mode }}</p>
+                    <p><strong>Variance:</strong> {{ variance }}</p>
+                    <p><strong>Standard Deviation:</strong> {{ std_dev }}</p>
+                </div>
+            {% endif %}
+
+            <div class="clear-container"><button class="clear" type="button" onclick="clearForm()">Clear</button></div>
+        </div>
+
+        <script>
+            function clearForm() {
+            
+                // Clear the input field
+                const inputField = document.querySelector('input[name="numbers"]');
+                if (inputField) {
+                    inputField.value = '';
+                }
+
+                // Optionally, you can also clear the results displayed on the page
+                const resultSection = document.querySelector('.result-section');
+                if (resultSection) {
+                    resultSection.innerHTML = '';
+                }
+            }
+        </script>
+    </body>
+</html>
