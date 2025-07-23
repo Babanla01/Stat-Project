@@ -30,10 +30,10 @@ jobs:
     - name: Build executable
       run: |
         pyinstaller --onefile run_desktop.py
-
-    - name: Upload executable
-      uses: actions/upload-artifact@v4
+    
+    - uses: actions/upload-artifact@v4
       with:
-        name: my-app
+        name: my-app-${{ matrix.os }}
         path: dist/
+
 
